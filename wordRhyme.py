@@ -4,8 +4,11 @@ Date: 	2016-05-02
 '''
 
 import random
+from nltk.corpus import brown
+import ngram
 
 wordSet = 'wordSet.txt'
+ngram_model = ngram.Model(brown.sents())
 
 def grabWordTags(word, elim=False):
     ftags = []
@@ -88,7 +91,7 @@ def mam(start, length):
         i += 1
     return array
 
-def line(stresses, low=1,high=2):
+def line(stresses, low=1,high=4):
     sentence = []
     i = 0
     while (i < len(stresses)):
@@ -103,7 +106,10 @@ def line(stresses, low=1,high=2):
                 words[j] = words[j][:-3]
         # CODE TO CHOOSE WORD MAY CHANGE
         # Previous word is at sentence[-1]
-        word = random.choice(words)
+        if len(sentence) > 0:
+            word = ngram_model.choose_weighted_random([sentence[-1]], words)
+        else:
+            word = random.choice(words)
         
         sentence.append(word)
         if (i == 0):
@@ -213,7 +219,11 @@ def testIambic():
         for j in range(len(words)):
             if (words[j][-1] == ')'):
                 words[j] = words[j][:-3]
-        sentence.append(random.choice(words))
+        if len(sentence) > 0:
+            word = ngram_model.choose_weighted_random([sentence[-1]], words)
+        else:
+            word = random.choice(words)
+        sentence.append(word)
         i += wl
     return sentence
 
