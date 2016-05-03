@@ -1,14 +1,34 @@
-'''
+#!/usr/bin/env python3
+
+"""
 Author:	James Boivie
 Date: 	2016-05-02
-'''
+"""
 
 import random
 from nltk.corpus import brown
 import ngram
+import re
+import sys
 
-wordSet = 'wordSet.txt'
-ngram_model = ngram.Model(brown.sents())
+
+def load_model(name='wordSet', sents=None):
+	if name != 'wordSet':
+		wordSet = name + 'Dict.txt'
+		if not sents:
+			try:
+				with open(name + '.txt', 'r') as f:
+					sents = [re.sub("[^\w ]", "", line.lower()).split() for line in f if not line.isspace()]
+			except FileNotFoundError as e:
+				print(e)
+				exit(1)
+	else:
+		wordSet = 'wordSet.txt'
+		sents = brown.sents()
+
+	ngram_model = ngram.Model(sents)
+
+	return ngram_model, wordSet
 
 def grabWordTags(word, elim=False):
     ftags = []
@@ -259,3 +279,32 @@ def testRhyme(word):
     sounds = findSound2(tags)
     rhymes = getRhyme2(sounds)
     return rhymes
+
+
+
+########
+##MAIN##
+########
+if len(sys.argv) > 1:
+	ngram_model, wordSet = load_model(sys.argv[1])
+else:
+	ngram_model, wordSet = load_model()
+
+while 1:
+	try:
+		command = input("Give a command: ")
+		if command == 'h':
+			print("(l)imerick, (i)ambic pentameter, (c)ouplet, hai(k)u, (h)elp")
+		if command == 'l':
+			testLimerick4()
+		elif command == 'i':
+			print(testIambic())
+		elif command == 'c':
+			testCouplet()
+		elif command == 'k':
+			testHaiku()
+		elif command == 'q':
+			exit(0)
+	except EOFError:
+		print()
+		exit(0)
