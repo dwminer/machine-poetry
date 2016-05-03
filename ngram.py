@@ -18,7 +18,6 @@ class Model:
 		for sent in sents:
 			for word in sent:
 				self.fd[word] += 1
-			#sent = ['<s>' for i in range(self.N-1)] + sent + ['</s>']
 			for ngram in zip( *[ sent[i:] for i in range(self.N)]):
 				self.cfd[ngram[:-1]][ngram[-1]] += 1
 
