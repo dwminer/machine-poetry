@@ -17,7 +17,7 @@ def load_model(name='wordSet', sents=None):
 		wordSet = name + 'Dict.txt'
 		if not sents:
 			try:
-				with open(name + '.txt', 'r') as f:
+				with open(name + '.txt', 'r', encoding='latin-1') as f:
 					sents = [re.sub("[^\w ]", "", line.lower()).split() for line in f if not line.isspace()]
 			except FileNotFoundError as e:
 				print(e)
@@ -290,9 +290,14 @@ if len(sys.argv) > 1:
 else:
 	ngram_model, wordSet = load_model()
 
+last = 'h'
 while 1:
 	try:
 		command = input("Give a command: ")
+		if command == '':
+			command = last
+		else:
+			last = command
 		if command == 'h':
 			print("(l)imerick, (i)ambic pentameter, (c)ouplet, hai(k)u, (h)elp")
 		if command == 'l':
